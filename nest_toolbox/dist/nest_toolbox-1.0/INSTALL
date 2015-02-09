@@ -1,0 +1,21 @@
+Nest Toolbox Installation
+=======================
+
+Install as root (if you want a global install)::
+
+	# python setup.py install
+
+or for those without root access, install to a writable location, something like::
+
+	$ python setup.py install --prefix=$HOME/opt/mystuff
+
+Then you need to add the location::
+
+    $HOME/opt/mystuff/lib/python2.5/site-packages/ 
+
+to your PYTHONPATH or within python in your sys.path directive.
+
+Note, here lib is replaced by `lib64` on 64 bit systems, and `python2.5` is
+(obviously) replaced by your python version.
+
+and happy days!

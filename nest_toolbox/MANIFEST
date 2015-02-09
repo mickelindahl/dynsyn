@@ -1,0 +1,11 @@
+INSTALL
+MANIFEST.in
+README
+setup.py
+examples/test.py
+src/__init__.py
+src/misc.py
+src/my_nest.py
+src/my_population.py
+src/my_signals.py
+src/plot_settings.py

@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: nest_toolbox
+Version: 1.0
+Summary: A collection of tools to help building models and visualizing results using Nest simulator
+Home-page: http://www.csc.kth.se/~lindahlm
+Author: Mikael Lindahl
+Author-email: lindahlm@csc.kth.se
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN

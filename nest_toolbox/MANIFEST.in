@@ -1,0 +1,4 @@
+include README
+recursive-include examples *.py *.param
+include INSTALL
+include MANIFEST.in

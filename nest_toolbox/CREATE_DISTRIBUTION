@@ -1,0 +1,11 @@
+To create a source distribution for this module, you would create a setup 
+script, setup.py, containing the above code, and run this command from a 
+terminal:
+
+python setup.py sdist
+
+For Windows, open a command prompt windows (“DOS box”) and change the command 
+to:
+
+setup.py sdist
+

@@ -1,0 +1,5 @@
+#!/bin/sh
+# First input number of processor
+# Second model name
+echo "Running model " $2 " on " $1 " processor"
+mpirun -np $1 python $2 simulate

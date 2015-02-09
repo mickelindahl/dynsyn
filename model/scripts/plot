@@ -1,0 +1,4 @@
+#!/bin/sh
+# Input parameter model name
+echo "Plotting data from model " $1
+time python $1 plot
