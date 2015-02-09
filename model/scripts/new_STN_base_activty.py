@@ -18,7 +18,9 @@ from src.my_axes import MyAxes
 from simulation_utils import simulate_basa_line_STN
 from src import misc
 import scipy.optimize as opt
-OUTPUT_PATH  = os.getcwd()+'/output/' + sys.argv[0].split('/')[-1].split('.')[0]
+
+HOME_DATA='/home/mikael/results/papers/dynsyn/network/supermicro/'
+OUTPUT_PATH  = HOME_DATA + sys.argv[0].split('/')[-1].split('.')[0]
 
 # Assume: n_gpe_stn=30, stn_current=0 and weight ctx_stn
 # Find: weight GPe-STN and rate ctx
@@ -32,7 +34,7 @@ neuron_model=['STN_75_aeif']
 syn_models=['CTX_STN_ampa_s','GPE_STN_gaba_s' ]
 gpe_rate=30.0        
 n_ctx, n_gpe =1, 30
- 
+THREADS=1 
 def plot_example(ax, STN_target, sim_time, x, type):
     meanRate=round(STN_target.signals['spikes'].mean_rate(1000,sim_time),1)
     spk=STN_target.signals['spikes'].time_slice(1000,sim_time).raw_data()
@@ -50,14 +52,18 @@ def plot_example(ax, STN_target, sim_time, x, type):
 def restriction_1(gpe_rate, n_ctx, n_gpe, x,  neuron_model, syn_models):
 # 1. 20 Hz without GPe input
     r,w=x
-    target_rate1=20.
+#     target_rate1=20.
+
+    target_rate1=10.*5
+
+
     n_gpe_ch=0
     STN_target=simulate_basa_line_STN(r, gpe_rate, n_ctx, n_gpe_ch,  
                                neuron_model, syn_models, 0, # This is the current to add to I_e base
-                               sim_time, 8, w_GPE_STN=w) 
+                               sim_time, THREADS, w_GPE_STN=w) 
  
     e=round(STN_target.signals['spikes'].mean_rate(1000,sim_time),1)-target_rate1
-    e=e/target_rate1
+#     e=e/target_rate1
     return STN_target, e
 
 def restriction_2(gpe_rate, n_ctx, n_gpe,x,   neuron_model, syn_models):
@@ -66,10 +72,10 @@ def restriction_2(gpe_rate, n_ctx, n_gpe,x,   neuron_model, syn_models):
         target_rate2=10.0
         STN_target=simulate_basa_line_STN(r, gpe_rate, n_ctx, n_gpe,  
                                neuron_model, syn_models, 0, # This is the current to add to I_e base
-                               sim_time, 8, w_GPE_STN=w )
+                               sim_time, THREADS, w_GPE_STN=w )
  
         e=round(STN_target.signals['spikes'].mean_rate(1000,sim_time),1)-target_rate2
-        e=e/target_rate2
+#         e=e/target_rate2
         
         return STN_target, e
 
@@ -79,7 +85,7 @@ def GPE_46_hz(gpe_rate, n_ctx, n_gpe, x, neuron_model, syn_models):
         gpe_rate_ch=30*1.55
         STN_target=simulate_basa_line_STN(r, gpe_rate_ch, n_ctx, n_gpe,  
                                neuron_model, syn_models, 0, # This is the current to add to I_e base
-                               sim_time, 8, w_GPE_STN=w)
+                               sim_time, THREADS, w_GPE_STN=w)
   
         STN_target.signals['spikes'].mean_rate(1000,sim_time)
         return STN_target
@@ -96,9 +102,17 @@ def error_fun(x, sim_time):
 def fmin(load, save_at):
     
   
-    x0=[210, 0.074]  #[current, w_GPE_STN]
+#     x0=[210, 0.074]  #[current, w_GPE_STN]
+  
+    x0=[1004., 0.397]  #[current, w_GPE_STN]
+
     if not load:
-        [xopt,fopt, iter, funcalls , warnflag, allvecs] = opt.fmin(error_fun, x0, args=([sim_time]), maxiter=10, maxfun=10,full_output=1, retall=1)
+        [xopt,fopt, iter, funcalls , warnflag, allvecs] = opt.fmin(error_fun, 
+                                                                   x0, 
+                                                                   args=([sim_time]), 
+                                                                   maxiter=20, 
+                                                                   maxfun=20, 
+                                                                   full_output=1, retall=1)
 
         misc.pickle_save([xopt,fopt, iter, funcalls , warnflag, allvecs], save_at)
     else:
@@ -111,14 +125,14 @@ sim_time=20000
   
 
 save_at=OUTPUT_PATH+'/simulate_network_fmin.plk' 
-x=fmin(1,save_at)
+x=fmin(0,save_at)
 #x=[215, 0.08]
 
 STN_target1, e1=restriction_1(gpe_rate, n_ctx, n_gpe, x, neuron_model, syn_models)
 STN_target2, e2=restriction_2(gpe_rate, n_ctx, n_gpe, x, neuron_model, syn_models)
 STN_target3 = GPE_46_hz(gpe_rate, n_ctx, n_gpe, x, neuron_model, syn_models)
 
-plot_settings.set_mode(pylab, mode='by_fontsize', w = 1000.0, h = 1000.0, fontsize=16)
+plot_settings.set_mode(pylab, mode='by_fontsize', w = 500.0, h = 500.0, fontsize=8)
 font_size_text = 8
 fig = pylab.figure( facecolor = 'w')
 

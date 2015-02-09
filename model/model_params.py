@@ -27,6 +27,42 @@ Returns:
     model_list 	- list with neuron, recording and synapse models name and 
                   corresponding parameters  
 '''
+def get_default_module_paths(home):
+    import nest
+    if nest.version()=='NEST 2.2.2':
+            s='nest-2.2.2'
+            
+    if nest.version()=='NEST 2.4.1':
+        s='nest-2.4.1'    
+    if nest.version()=='NEST 2.4.2':
+        s='nest-2.4.2'   
+       
+#     module=   'install-module-100725-'  
+    module=   'install-module-130701-'   
+    path= (home+'/opt/NEST/module/'
+                  +module+s+'/lib/nest/ml_module')
+    sli_path =(home+'/opt/NEST/module/'
+                      +module+s+'/share/ml_module/sli')
+    
+    return path, sli_path
+# 
+# def GetThreads():
+#     # Should return number of local threads if shared memory run 
+#     # eler number of mpi processes
+#     
+#     if Rank()==1:
+#         return GetKernelStatus('local_num_threads') #shared memory
+#     else:
+#         return GetKernelStatus('num_processes') #mpi
+
+def install_module(path, sli_path, model_to_exist='my_aeif_cond_exp'):
+    
+    import nest
+    if not model_to_exist in nest.Models(): 
+        nest.sr('('+sli_path+') addpath')
+        nest.Install(path)
+
+
 def models( Params_in = {}, p=False ):
     #! Preparations
     #! ============
@@ -38,6 +74,7 @@ def models( Params_in = {}, p=False ):
     import matplotlib.pyplot as pl
     import pprint
     import time as ttime
+    from os.path import expanduser
     #current_path=os.getcwd()
 
     # First add parent directory to python path
@@ -47,7 +84,9 @@ def models( Params_in = {}, p=False ):
     
     #! Install nmda neuron model, need to do it twice due to some bug
     try:
-        nest.Install('ml_module')
+        path, sli_path=get_default_module_paths(expanduser("~"))
+        install_module(path, sli_path, model_to_exist='my_aeif_cond_exp' )
+#         nest.Install('ml_module')
     except:
       pass
      
@@ -748,8 +787,6 @@ def models( Params_in = {}, p=False ):
                'weight'  : STN_STN_ampa_p , 'delay'   : 1.0,
                'receptor_type' : rec[ 'AMPA_1' ] } 
     model_list.append(('tsodyks_synapse' , 'STN_STN_ampa_p' , params))
-
-    
     
     params = { 'delay'         : 2.0, 'weight' : STN_STN_ampa_s , # AMPA_1 static
                'receptor_type' : rec[ 'AMPA_1' ] } 
