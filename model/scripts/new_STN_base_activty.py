@@ -26,7 +26,8 @@ OUTPUT_PATH  = HOME_DATA + sys.argv[0].split('/')[-1].split('.')[0]
 # Find: weight GPe-STN and rate ctx
 #
 # Requirements
-# 1. 20 Hz without GPe input
+# alt 1. 1. 20 Hz without GPe input Farries 2010
+# alt 2  1. 466 % upp  Feger 1991
 # 2. 10 Hz with gaba
 
 
@@ -52,11 +53,19 @@ def plot_example(ax, STN_target, sim_time, x, type):
 def restriction_1(gpe_rate, n_ctx, n_gpe, x,  neuron_model, syn_models):
 # 1. 20 Hz without GPe input
     r,w=x
-#     target_rate1=20.
+    target_rate1=20.
 
-    target_rate1=10.*5
+#     target_rate1=10.*4.6
 
+#     target_rate1=10.*2.5    
+#     target_rate1=10.*3.
 
+#     target_rate1=10.*3.5
+#     target_rate1=10.*4.
+#     target_rate1=10.*4.5
+#     target_rate1=10.*5.
+#     target_rate1=10.*5.5   
+    target_rate1=10.*8        
     n_gpe_ch=0
     STN_target=simulate_basa_line_STN(r, gpe_rate, n_ctx, n_gpe_ch,  
                                neuron_model, syn_models, 0, # This is the current to add to I_e base
@@ -102,10 +111,23 @@ def error_fun(x, sim_time):
 def fmin(load, save_at):
     
   
-#     x0=[210, 0.074]  #[current, w_GPE_STN]
+    x0=[188, 0.08]  #[current, w_GPE_STN] 20 Hz
   
-    x0=[1004., 0.397]  #[current, w_GPE_STN]
+  
+  #29.720625
+  #0.011041875
 
+#     x0=[290, 0.119] #25
+#     x0=[430,0.18] #30 Hz
+#     x=[540, 0.215] #35 Hz
+#     x0=[702, 0.28] #40 Hz
+#     x0=[830., 0.336] #45 Hz
+#     x0=[876.7, 0.349]  #[current, w_GPE_STN] 46 Hz
+#     x0=[1000.8, 0.3957] # 50 Hz]
+#     x0=[1159., 0.458] # 55 Hz]    
+#     x0=[1159.+2.5*5*29.7, 0.458+2.5*5*0.01104] # 80 Hz] 
+    x0=[2102, 0.794] # 80 Hz] 
+#     z=[1161, 454] #
     if not load:
         [xopt,fopt, iter, funcalls , warnflag, allvecs] = opt.fmin(error_fun, 
                                                                    x0, 
